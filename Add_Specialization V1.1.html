@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Specialization</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 400px;
+      margin: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-container input, .form-container select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="form-container">
+      <h2>إضافة تخصص جديد</h2>
+
+      <label for="name">اسم التخصص:</label>
+      <input type="text" id="name" v-model="specialization.name" placeholder="أدخل اسم التخصص">
+
+      <label for="path">المسار:</label>
+      <select id="path" v-model="specialization.path">
+        <option value="" disabled>اختر المسار</option>
+        <option value="علمي">علمي</option>
+        <option value="إداري">إداري</option>
+        <option value="تقني">تقني</option>
+      </select>
+
+      <button @click="addSpecialization">إضافة التخصص</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        specialization: {
+          name: "",
+          path: ""  // المسار المختار
+        }
+      },
+      methods: {
+        addSpecialization() {
+          if (this.specialization.name && this.specialization.path) {
+            axios.post("http://127.0.0.1:8080/api/add-specialization", this.specialization)
+              .then(response => {
+                alert("تمت إضافة التخصص بنجاح!");
+                this.resetForm();
+              })
+              .catch(error => {
+                console.error("Error adding specialization:", error);
+                alert("حدث خطأ أثناء إضافة التخصص.");
+              });
+          } else {
+            alert("يجب إدخال جميع البيانات!");
+          }
+        },
+        resetForm() {
+          this.specialization = {
+            name: "",
+            path: ""
+          };
+        }
+      }
+    });
+  </script>
+</body>
+</html>

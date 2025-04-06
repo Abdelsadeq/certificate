@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Certification</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border: 10px solid #ddd;
+      border-radius: 8px;
+      width: 600px;
+      margin: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-container input, .form-container select, .form-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="form-container">
+      <h2>إضافة شهادة جديدة</h2>
+
+      <label for="name">اسم الشهادة:</label>
+      <input type="text" id="name" v-model="certification.name" placeholder="أدخل اسم الشهادة">
+
+      <label for="description">الوصف:</label>
+      <textarea id="description" v-model="certification.description" placeholder="أدخل وصف الشهادة"></textarea>
+
+      <label for="validity">مدة الصلاحية (بالسنوات):</label>
+      <input type="number" id="validity" v-model="certification.validity" placeholder="أدخل مدة الصلاحية">
+
+      <label for="provider">مزود الشهادة:</label>
+      <input type="text" id="provider" v-model="certification.provider" placeholder="اسم المزود">
+
+      <label for="isSupportedByHadaf">مدعومة من هدف:</label>
+      <select id="isSupportedByHadaf" v-model="certification.isSupportedByHadaf">
+        <option value="نعم">نعم</option>
+        <option value="لا">لا</option>
+		<!--option value="بطيخ">بطيخ</option-->
+      </select>
+
+      <label for="learningSource">مصدر التعليم:</label>
+      <input type="text" id="learningSource" v-model="certification.learningSource" placeholder="رابط التعليم">
+
+      <label for="officialWebsite">الموقع الرسمي:</label>
+      <input type="text" id="officialWebsite" v-model="certification.officialWebsite" placeholder="رابط الموقع الرسمي">
+
+      <label for="registrationMethod">طريقة التسجيل:</label>
+      <input type="text" id="registrationMethod" v-model="certification.registrationMethod" placeholder="طريقة التسجيل">
+
+      <label for="trainingCost">تكلفة التدريب:</label>
+      <input type="number" id="trainingCost" v-model="certification.trainingCost" placeholder="أدخل تكلفة التدريب">
+
+      <label for="examCost">تكلفة الاختبار:</label>
+      <input type="number" id="examCost" v-model="certification.examCost" placeholder="أدخل تكلفة الاختبار">
+
+      <label for="numberOfExams">عدد الاختبارات:</label>
+      <input type="number" id="numberOfExams" v-model="certification.numberOfExams" placeholder="عدد الاختبارات">
+
+      <label for="learningMode">وضع التعليم:</label>
+      <select id="learningMode" v-model="certification.learningMode">
+        <option value="ذاتي">ذاتي</option>
+        <option value="مباشر">مباشر</option>
+      </select>
+
+      <label for="specialization">التخصص:</label>
+      <select id="specialization" v-model="certification.specialization">
+        <option value="" disabled>اختر التخصص</option>
+        <option v-for="specialization in specializations" :key="specialization" :value="specialization">
+          {{ specialization }}
+        </option>
+      </select>
+
+      <button @click="addCertification">إضافة الشهادة</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        certification: {
+          name: "",
+          description: "",
+          validity: null,
+          provider: "",
+          isSupportedByHadaf: "لا",
+          learningSource: "",
+          officialWebsite: "",
+          registrationMethod: "",
+          trainingCost: null,
+          examCost: null,
+          numberOfExams: null,
+          learningMode: "ذاتي",
+          specialization: "" // التخصص المختار
+        },
+        specializations: [
+          "تحليل بيانات",
+          "شبكات",
+          "أمن معلومات وأمن سيبراني",
+          "موارد بشرية",
+          "محاسبة وتمويل واستثمار",
+          "إدارة مخاطر وتأمين",
+          "إدارة مشاريع",
+          "تسويق ومبيعات"
+        ]
+      },
+      methods: {
+        addCertification() {
+          // إرسال بيانات الشهادة إلى API
+          axios.post("http://127.0.0.1:8080/api/add-certification", this.certification)
+            .then(response => {
+              alert("تمت إضافة الشهادة بنجاح!");
+              this.resetForm();
+            })
+            .catch(error => {
+              console.error("Error adding certification:", error);
+              alert("حدث خطأ أثناء إضافة الشهادة.");
+            });
+        },
+        resetForm() {
+          this.certification = {
+            name: "",
+            description: "",
+            validity: null,
+            provider: "",
+            isSupportedByHadaf: "لا",
+            learningSource: "",
+            officialWebsite: "",
+            registrationMethod: "",
+            trainingCost: null,
+            examCost: null,
+            numberOfExams: null,
+            learningMode: "ذاتي",
+            specialization: ""
+          };
+        }
+      }
+    });
+  </script>
+</body>
+</html>

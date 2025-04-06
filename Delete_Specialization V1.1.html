@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حذف تخصص</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+      direction: rtl;
+      text-align: right;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 400px;
+      margin: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-container select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="form-container">
+      <h2>حذف تخصص</h2>
+
+      <label for="specialization">اسم التخصص:</label>
+      <select id="specialization" v-model="selectedSpecialization">
+        <option value="" disabled>اختر التخصص</option>
+        <option v-for="specialization in specializations" :key="specialization" :value="specialization">
+          {{ specialization }}
+        </option>
+      </select>
+
+      <button @click="deleteSpecialization">حذف التخصص</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        selectedSpecialization: "", // اسم التخصص المختار
+        specializations: []         // قائمة التخصصات
+      },
+      methods: {
+        fetchSpecializations() {
+          // جلب قائمة التخصصات من API
+          axios.get("http://127.0.0.1:8080/api/specializations")
+            .then(response => {
+              console.log("Specializations fetched:", response.data);
+              this.specializations = response.data;
+            })
+            .catch(error => {
+              console.error("Error fetching specializations:", error);
+            });
+        },
+        deleteSpecialization() {
+          if (this.selectedSpecialization) {
+            if (confirm(`هل أنت متأكد أنك تريد حذف "${this.selectedSpecialization}"؟`)) {
+              axios.post("http://127.0.0.1:8080/api/delete-specialization", {
+                name: this.selectedSpecialization
+              })
+              .then(response => {
+                alert("تم حذف التخصص بنجاح!");
+                this.fetchSpecializations(); // تحديث قائمة التخصصات بعد الحذف
+              })
+              .catch(error => {
+                console.error("Error deleting specialization:", error);
+                alert("حدث خطأ أثناء حذف التخصص.");
+              });
+            }
+          } else {
+            alert("يرجى اختيار تخصص لحذفه.");
+          }
+        }
+      },
+      mounted() {
+        this.fetchSpecializations(); // جلب قائمة التخصصات عند تحميل الصفحة
+      }
+    });
+  </script>
+</body>
+</html>

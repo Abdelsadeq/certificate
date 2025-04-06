@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حذف مسمى وظيفي</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+      direction: rtl;
+      text-align: right;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 400px;
+      margin: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-container select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="form-container">
+      <h2>حذف مسمى وظيفي</h2>
+
+      <label for="job-title">اسم المسمى الوظيفي:</label>
+      <select id="job-title" v-model="selectedJobTitle">
+        <option value="" disabled>اختر المسمى الوظيفي</option>
+        <option v-for="job in jobTitles" :key="job" :value="job">
+          {{ job }}
+        </option>
+      </select>
+
+      <button @click="deleteJobTitle">حذف المسمى الوظيفي</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        selectedJobTitle: "", // اسم المسمى الوظيفي المختار
+        jobTitles: []         // قائمة المسميات الوظيفية
+      },
+      methods: {
+        fetchJobTitles() {
+          // جلب قائمة المسميات الوظيفية من API
+          axios.get("http://127.0.0.1:8080/api/job-titles")
+            .then(response => {
+              console.log("Job titles fetched:", response.data);
+              this.jobTitles = response.data;
+            })
+            .catch(error => {
+              console.error("Error fetching job titles:", error);
+            });
+        },
+        deleteJobTitle() {
+          if (this.selectedJobTitle) {
+            if (confirm(`هل أنت متأكد أنك تريد حذف "${this.selectedJobTitle}"؟`)) {
+              axios.post("http://127.0.0.1:8080/api/delete-job-title", {
+                name: this.selectedJobTitle
+              })
+              .then(response => {
+                alert("تم حذف المسمى الوظيفي بنجاح!");
+                this.fetchJobTitles(); // تحديث قائمة المسميات بعد الحذف
+              })
+              .catch(error => {
+                console.error("Error deleting job title:", error);
+                alert("حدث خطأ أثناء حذف المسمى الوظيفي.");
+              });
+            }
+          } else {
+            alert("يرجى اختيار مسمى وظيفي لحذفه.");
+          }
+        }
+      },
+      mounted() {
+        this.fetchJobTitles(); // جلب قائمة المسميات الوظيفية عند تحميل الصفحة
+      }
+    });
+  </script>
+</body>
+</html>

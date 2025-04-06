@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حذف شهادة</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+      direction: rtl;
+      text-align: right;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 400px;
+      margin: auto;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-container select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="form-container">
+      <h2>حذف شهادة</h2>
+
+      <label for="certification">اسم الشهادة:</label>
+      <select id="certification" v-model="selectedCertification">
+        <option value="" disabled>اختر الشهادة</option>
+        <option v-for="certification in certifications" :key="certification" :value="certification">
+          {{ certification }}
+        </option>
+      </select>
+
+      <button @click="deleteCertification">حذف الشهادة</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        selectedCertification: "", // اسم الشهادة المختارة
+        certifications: []         // قائمة الشهادات
+      },
+      methods: {
+        fetchCertifications() {
+          // جلب قائمة الشهادات من API
+          axios.get("http://127.0.0.1:8080/api/certifications-list")
+            .then(response => {
+              console.log("Certifications fetched:", response.data);
+              this.certifications = response.data;
+            })
+            .catch(error => {
+              console.error("Error fetching certifications:", error);
+            });
+        },
+        deleteCertification() {
+          if (this.selectedCertification) {
+            if (confirm(`هل أنت متأكد أنك تريد حذف "${this.selectedCertification}"؟`)) {
+              axios.post("http://127.0.0.1:8080/api/delete-certification", {
+                name: this.selectedCertification
+              })
+              .then(response => {
+                alert("تم حذف الشهادة بنجاح!");
+                this.fetchCertifications(); // تحديث قائمة الشهادات بعد الحذف
+              })
+              .catch(error => {
+                console.error("Error deleting certification:", error);
+                alert("حدث خطأ أثناء حذف الشهادة.");
+              });
+            }
+          } else {
+            alert("يرجى اختيار شهادة لحذفها.");
+          }
+        }
+      },
+      mounted() {
+        this.fetchCertifications(); // جلب قائمة الشهادات عند تحميل الصفحة
+      }
+    });
+  </script>
+</body>
+</html>

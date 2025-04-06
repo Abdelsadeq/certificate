@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الصفحة الرئيسية</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #007BFF, #0056b3);
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      color: #333;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2em;
+      color: #007BFF;
+    }
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .button {
+      text-decoration: none;
+      background-color: #007BFF;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    .button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    .button:active {
+      background-color: #003f87;
+      transform: scale(0.95);
+    }
+    footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>الصفحة الرئيسية</h1>
+    <p>اختر الإجراء الذي تريد القيام به:</p>
+    <div class="buttons">
+      <!-- الروابط إلى الصفحات -->
+      <a href="Add_certification V01.3.html" class="button">إضافة شهادة</a>
+      <a href="Delete_certification V01.1.html" class="button">حذف شهادة</a>
+      <a href="Add_Job_Title V1.1.html" class="button">إضافة مسمى وظيفي</a>
+      <a href="Delete_Job_Title V1.1 .html" class="button">حذف مسمى وظيفي</a>
+      <a href="Add_Specialization V1.1.html" class="button">إضافة تخصص</a>
+      <a href="Delete_Specialization V1.1.html" class="button">حذف تخصص</a>
+    </div>
+    <footer>
+      © 2024 جميع الحقوق محفوظة
+    </footer>
+  </div>
+</body>
+</html>
